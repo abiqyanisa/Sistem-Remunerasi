@@ -1,0 +1,37 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "migrate": "node src/utils/migrate.js",
+    "migrate:undo": "node src/utils/migrate-undo.js",
+    "seed": "node src/utils/seed.js",
+    "seed:undo": "node src/utils/seed-undo.js",
+    "start-dev": "set NODE_ENV=development && nodemon ./src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.1",
+    "eslint": "^9.25.1",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3",
+    "sequelize-cli": "^6.6.2",
+    "sequelize-cli-esm": "^5.0.6"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "pg": "^8.15.5",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7",
+    "slugify": "^1.6.6",
+    "umzug": "^3.8.2"
+  }
+}
