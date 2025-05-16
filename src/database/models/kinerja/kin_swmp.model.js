@@ -1,5 +1,4 @@
-import { sequelize } from "../../../config/database.js";
-import { DataTypes, literal } from "sequelize";
+import { literal } from "sequelize";
 
 export default (sequelize, DataTypes) => {
     const KinSwmp = sequelize.define('KinSwmp', {
@@ -554,5 +553,3 @@ export default (sequelize, DataTypes) => {
     }
     return KinSwmp;
 }
-
-// export { KinSwmp };

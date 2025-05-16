@@ -28,4 +28,20 @@ const getDaftarDosen = catchAsync (async (req, res, next) => {
     });
 });
 
-export { getDaftarDosen }
+const getDataDosen = catchAsync (async (req, res, next) => {
+    const nidnDosen = reverseSlugify(req.params.nidn);
+    const dataDosen = await db.DataDosen.findOne({
+        where: {nidn: nidnDosen}
+    });
+
+    if (!dataDosen) {
+        return next (new catchError('Lecturer not found', 400))
+    }
+
+    return res.json({
+        status: 'success',
+        dataDosen: dataDosen
+    });
+});
+
+export { getDaftarDosen, getDataDosen }

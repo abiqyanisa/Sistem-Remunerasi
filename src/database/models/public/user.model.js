@@ -1,8 +1,7 @@
 'use strict';
 import bcrypt from "bcrypt";
 
-import { DataTypes, literal } from 'sequelize';
-import { sequelize } from '../../../config/database.js';
+import { literal } from 'sequelize';
 import { catchError } from '../../../utils/catchError.js';
 
 export default (sequelize, DataTypes) => {
@@ -86,10 +85,8 @@ export default (sequelize, DataTypes) => {
     User.belongsTo(models.DataDosen, {
       foreignKey: 'nidn',
       targetKey: 'nidn',
-      as: 'pengguna'
+      as: 'Pengguna'
     });
   };
   return User;
 };
-
-// export { User };

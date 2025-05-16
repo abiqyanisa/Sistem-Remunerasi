@@ -1,13 +1,10 @@
 import express from 'express';
+import authorizeScope from '../middleware/authorizeScope.js';
 
-import { 
-    getAllBidangKinerjaRemun, 
-    getDataFakultas 
-} from '../controllers/fakultas.controller.js';
+import { getAllBidangKinerjaRemun, getDataFakultas } from '../controllers/fakultas.controller.js';
 import { getDaftarProdi, getDataProdi } from '../controllers/program_studi.controller.js';
 import { authentication, restrictToRole} from '../controllers/auth.controller.js';
-import authorizeScope from '../middleware/authorizeScope.js';
-import { getDaftarDosen } from '../controllers/data_dosen.controller.js';
+import { getDaftarDosen, getDataDosen } from '../controllers/data_dosen.controller.js';
 
 const remunerasiRouter = express.Router();
 
@@ -26,44 +23,7 @@ remunerasiRouter.route('/programstudi/:prodi')
 remunerasiRouter.route('/programstudi/:prodi/dosen')
     .get(authentication, restrictToRole('dekan', 'kaprodi'), authorizeScope(), getDaftarDosen)
 
-// remunerasiRouter.get(
-//     '/fakultas/:fak',
-//     authentication,
-//     restrictToRole('dekan'),
-//     authorizeScope(),
-//     getDataFakultas
-// );
-
-// remunerasiRouter.get(
-//     '/fakultas/:fak/programstudi',
-//     authentication,
-//     restrictToRole('dekan'),
-//     authorizeScope(),
-//     getDaftarProdi
-// );
-
-// remunerasiRouter.get(
-//     '/fakultas/:fak/programstudi/:prodi',
-//     authentication,
-//     restrictToRole('dekan'),
-//     authorizeScope(),
-//     getDataProdi
-// );
-
-// remunerasiRouter.get(
-//     '/fakultas/:fak/programstudi/:prodi/dosen/:nidn',
-//     authentication,
-//     restrictToRole('dekan'),
-//     authorizeScope(),
-//     getDaftarDosen
-// );
-
-remunerasiRouter.get(
-    '/programstudi/:prodi',
-    authentication,
-    restrictToRole('kaprodi'),
-    authorizeScope(),
-    getDataProdi
-);
+remunerasiRouter.route('/dosen/:nidn')
+    .get(authentication, restrictToRole('dekan', 'kaprodi', 'dosen'), authorizeScope(), getDataDosen)
 
 export { remunerasiRouter }

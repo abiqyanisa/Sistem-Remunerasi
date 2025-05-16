@@ -1,6 +1,4 @@
-import { sequelize } from "../../../config/database.js";
-import { DataTypes, literal } from "sequelize";
-// import KegiatanRemun from "./kegiatan_remun.model.js";
+import { literal } from "sequelize";
 
 export default (sequelize, DataTypes) => {
     const UnsurKegiatanRemun = sequelize.define('UnsurKegiatanRemun', {
@@ -82,9 +80,3 @@ export default (sequelize, DataTypes) => {
     };
     return UnsurKegiatanRemun;
 }
-
-// One-to-Many: UnsurKegiatanRemun has many KegiatanRemun
-// UnsurKegiatanRemun.hasMany(KegiatanRemun, {foreignKey: 'kode_unsur_kegiatan'});
-// KegiatanRemun.belongsTo(UnsurKegiatanRemun, {foreignKey: 'kode_unsur_kegiatan'});
-
-// export { UnsurKegiatanRemun };

@@ -1,6 +1,4 @@
-import { sequelize } from "../../../config/database.js";
-import { DataTypes, literal } from "sequelize";
-// import { KinSwmp } from "./kin_swmp.model.js";
+import { literal } from "sequelize";
 
 export default (sequelize, DataTypes) => {
     const KegiatanRemun = sequelize.define('KegiatanRemun', {
@@ -82,9 +80,3 @@ export default (sequelize, DataTypes) => {
     }
     return KegiatanRemun;
 }
-
-// One-to-Many: KegiatanRemun has many KinSWMP
-// KegiatanRemun.hasMany(KinSwmp, {foreignKey: 'id_kegiatan'});
-// KinSwmp.belongsTo(KegiatanRemun, {foreignKey: 'id_kegiatan'});
-
-// export { KegiatanRemun }

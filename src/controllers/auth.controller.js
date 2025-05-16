@@ -51,11 +51,11 @@ const login = catchAsync(async (req, res, next) => {
         include: [
             {
                 model: db.Fakultas,
-                as: 'Fakultas-Dekan',
+                as: 'DosenbyFak',
             },
             {
                 model: db.ProgramStudi,
-                as: 'Prodi-Kaprodi',
+                as: 'DosenbyProdi',
             }
         ]
     });
@@ -124,7 +124,7 @@ const authentication = catchAsync (async (req, res, next) => {
         req.db = { User: freshUser };
         next();
     } catch (err) {
-        return next (new catchError('Invalid or expired token', 403));
+        return next (new catchError('Invalid or expired token', 401));
     }
 });
 
@@ -141,36 +141,8 @@ const restrictToRole = (...role) => {
     return checkPermission;
 };
 
-const authorizeScope = (options) => {
-    return (req, res, next) => {
-        const { role, fakultas, prodi } = req.user;
-
-        // Ambil parameter dari URL
-        const reqFak = reverseSlugify(req.params.fak);     
-        const reqProdi = reverseSlugify(req.params.prodi);
-
-        // Batasi akses dekan ke fakultas-nya saja
-        if (role === 'dekan') {
-            if (!reqFak || reqFak !== fakultas.toLowerCase()) {
-                return next(new catchError('Access Denied: you cannot access another faculties', 403));
-            }
-        }
-
-        // Batasi akses kaprodi ke prodi-nya saja
-        if (role === 'kaprodi') {
-        if (!reqProdi || reqProdi !== prodi.toLowerCase()) {
-            return next(new catchError('Access Denied: you cannot access another study programs', 403));
-        }
-        }
-
-        // Admin atau user valid, lanjut
-        next();
-    };
-};
-
 export { 
     login, 
     authentication, 
     restrictToRole, 
-    //authorizeScope
 }

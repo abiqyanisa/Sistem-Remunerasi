@@ -1,7 +1,4 @@
-import { sequelize } from "../../../config/database.js";
-import { DataTypes, literal } from "sequelize";
-// import ProgramStudi from "./program_studi.model.js";
-// import DataDosen from "../kinerja/data_dosen.model.js";
+import { literal } from "sequelize";
 
 export default (sequelize, DataTypes) => {
     const Fakultas = sequelize.define('Fakultas', {
@@ -85,21 +82,12 @@ export default (sequelize, DataTypes) => {
     Fakultas.associate = (models) => {
         Fakultas.hasMany(models.ProgramStudi, {
             foreignKey: 'id_fak',
-            as: 'FakProdi'
+            as: 'ProdibyFak'
         });
         Fakultas.hasMany(models.DataDosen, {
-            foreignKey: 'fakultas'
+            foreignKey: 'fakultas',
+            as: 'DosenbyFak'
         });
     }
     return Fakultas;
 }
-
-// One-to-Many: Fakultas has many ProgramStudi
-// Fakultas.hasMany(ProgramStudi, {foreignKey: 'id_fak'});
-// ProgramStudi.belongsTo(Fakultas, {foreignKey: 'id_fak'});
-
-// One-to-Many: Fakultas has many DataDosen
-// Fakultas.hasMany(DataDosen, {foreignKey: 'fakultas'});
-// DataDosen.belongsTo(Fakultas, {foreignKey: 'fakultas'})
-
-// export { Fakultas };

@@ -15,7 +15,7 @@ const db = {
 const modelDirs = ['master', 'kinerja', 'public'];
 const modelDefiners = [];
 
-// 1. Baca semua model di subfolder dan simpan definisinya
+// Baca semua model di subfolder dan simpan definisinya
 for (const dir of modelDirs) {
   const dirPath = path.join(__dirname, dir);
   const files = fs.readdirSync(dirPath).filter(file =>
@@ -30,13 +30,13 @@ for (const dir of modelDirs) {
   }
 }
 
-// 2. Inisialisasi semua model
+// Inisialisasi semua model
 for (const { defineModel } of modelDefiners) {
   const model = defineModel(sequelize, DataTypes);
   db[model.name] = model;
 }
 
-// 3. Setup semua relasi
+// Setup semua relasi
 for (const modelName of Object.keys(db)) {
   const model = db[modelName];
   if (model.associate) {

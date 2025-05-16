@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import db from '../database/models/model.js';
-// import User from "../database/models/public/user.model.js";
+
 import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
 

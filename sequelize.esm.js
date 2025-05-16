@@ -1,4 +1,3 @@
-// sequelize.esm.js
 import { Sequelize } from 'sequelize';
 import configFile from './src/config/config.cjs'; // load config manual
 
