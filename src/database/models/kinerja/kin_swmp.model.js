@@ -175,7 +175,7 @@ export default (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull: true
         },
-        jejang: {
+        jenjang: {
             type: DataTypes.TEXT,
             allowNull: true
         },
@@ -545,10 +545,12 @@ export default (sequelize, DataTypes) => {
     });
     KinSwmp.associate = (models) => {
         KinSwmp.belongsTo(models.KegiatanRemun, {
-            foreignKey: 'id_kegiatan'
+            foreignKey: 'id_kegiatan',
+            as: 'Kegiatan_Kin'
         });
         KinSwmp.belongsTo(models.DataDosen, {
-            foreignKey: 'id_dosen'
+            foreignKey: 'id_dosen',
+            as: 'DataDosen_KinSwmp'
         });
     }
     return KinSwmp;

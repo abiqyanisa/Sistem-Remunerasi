@@ -109,7 +109,8 @@ export default (sequelize, DataTypes) => {
     });
     DataDosen.associate = (models) => {
         DataDosen.hasMany(models.KinSwmp, {
-            foreignKey: 'id_dosen'
+            foreignKey: 'id_dosen',
+            as: 'DataDosen_KinSwmp'
         });
         DataDosen.belongsTo(models.Fakultas, { 
             foreignKey: 'fakultas',

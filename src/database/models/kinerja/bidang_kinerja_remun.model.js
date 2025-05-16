@@ -77,7 +77,8 @@ export default (sequelize, DataTypes) => {
     });
     BidangKinerjaRemun.associate = (models) => {
         BidangKinerjaRemun.hasMany(models.UnsurKegiatanRemun, {
-        foreignKey: 'kode_bidang'
+            foreignKey: 'kode_bidang',
+            as: 'Bidang_Unsur'
         });
     };
     return BidangKinerjaRemun;

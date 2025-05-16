@@ -29,7 +29,7 @@ const getDaftarDosen = catchAsync (async (req, res, next) => {
 });
 
 const getDataDosen = catchAsync (async (req, res, next) => {
-    const nidnDosen = reverseSlugify(req.params.nidn);
+    const nidnDosen = req.params.nidn;
     const dataDosen = await db.DataDosen.findOne({
         where: {nidn: nidnDosen}
     });
@@ -41,7 +41,7 @@ const getDataDosen = catchAsync (async (req, res, next) => {
     return res.json({
         status: 'success',
         dataDosen: dataDosen
-    });
+    })
 });
 
 export { getDaftarDosen, getDataDosen }

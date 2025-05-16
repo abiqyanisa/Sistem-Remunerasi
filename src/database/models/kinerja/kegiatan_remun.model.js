@@ -72,10 +72,12 @@ export default (sequelize, DataTypes) => {
     });
     KegiatanRemun.associate = (models) => {
         KegiatanRemun.belongsTo(models.UnsurKegiatanRemun, {
-            foreignKey: 'kode_unsur_kegiatan'
+            foreignKey: 'kode_unsur_kegiatan',
+            as: 'Unsur_Kegiatan'
         });
         KegiatanRemun.hasMany(models.KinSwmp, {
-            foreignKey: 'id_kegiatan'
+            foreignKey: 'id_kegiatan',
+            as: 'Kegiatan_Kin'
         });
     }
     return KegiatanRemun;
