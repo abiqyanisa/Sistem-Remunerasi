@@ -1,10 +1,9 @@
 import db from "../database/models/model.js";
 import { catchAsync } from "../utils/catchAsync.js";
 
-
-
 const getPendidikan = catchAsync (async (req, res, next) => {
     // ambil nidn dari path
+    const nidnDosen = req.params.nidn;
     // ambil relasi dan cocokkan nidn user dgn data dosen
     const foundDosen = await db.DataDosen.findOne({
         where: {nidn: nidnDosen},
@@ -13,7 +12,6 @@ const getPendidikan = catchAsync (async (req, res, next) => {
             as: 'DataDosen_KinSwmp'
         }
     });
-    const nidnDosen = req.params.nidn;
     // ambil data kinerja pengabdian by kode bidang dan nidn
     const Pendidikan = await db.BidangKinerjaRemun.findOne({
         where: { kode: 1 },

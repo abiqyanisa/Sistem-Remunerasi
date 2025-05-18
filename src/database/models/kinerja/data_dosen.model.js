@@ -125,7 +125,7 @@ export default (sequelize, DataTypes) => {
         DataDosen.hasOne(models.User, {
             foreignKey: 'nidn',
             sourceKey: 'nidn',
-            as: 'Pengguna'
+            as: 'dataDosen'
         });
     }
     return DataDosen;

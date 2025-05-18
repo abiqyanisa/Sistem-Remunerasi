@@ -32,7 +32,7 @@ const login = catchAsync(async (req, res, next) => {
         return next(new catchError('Incorrect nidn or password', 401));
     }
     
-    // 🟢 Jika admin langsung return
+    // Admin langsung return
     if (user.role === 'admin') {
         const token = generateToken({
             nidn: user.nidn,
@@ -105,7 +105,6 @@ const login = catchAsync(async (req, res, next) => {
         redirectPath
     });
 });
-
 
 const authentication = catchAsync (async (req, res, next) => {
     const authHeader = req.headers.authorization;

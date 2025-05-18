@@ -85,7 +85,7 @@ export default (sequelize, DataTypes) => {
     User.belongsTo(models.DataDosen, {
       foreignKey: 'nidn',
       targetKey: 'nidn',
-      as: 'Pengguna'
+      as: 'dataDosen'
     });
   };
   return User;
