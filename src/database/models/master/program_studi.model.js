@@ -67,6 +67,7 @@ export default (sequelize, DataTypes) => {
         timestamps: false,
         paranoid: true
     });
+    
     ProgramStudi.associate = (models) => {
         ProgramStudi.belongsTo(models.Fakultas, {
             foreignKey: 'id_fak',

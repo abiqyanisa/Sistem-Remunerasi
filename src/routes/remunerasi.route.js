@@ -1,90 +1,74 @@
 import express from 'express';
 import authorizeScope from '../middleware/authorizeScope.js';
 
-import { getAllBidangKinerjaRemun, getDataFakultas } from '../controllers/fakultas.controller.js';
-import { getDaftarProdi, getDataProdi } from '../controllers/program_studi.controller.js';
+import { getDataFakultas } from '../controllers/fakultas.controller.js';
+import { getDataProdi } from '../controllers/program_studi.controller.js';
 import { authentication, restrictToRole} from '../controllers/auth.controller.js';
-import { getDaftarDosen, getDataDosen } from '../controllers/data_dosen.controller.js';
+import { getDataDosen } from '../controllers/data_dosen.controller.js';
 import { getPelaksanaanPendidikan, getPendidikan, getPenelitian, getPengabdian, getPenunjang } from '../controllers/bidang.controller.js';
 
 const remunerasiRouter = express.Router();
 
-remunerasiRouter.route('/fakultas/:fak')
+remunerasiRouter.route('/fakultas')
 .get(
     authentication, 
-    restrictToRole('dekan'), 
+    restrictToRole('admin', 'dekan'), 
     authorizeScope(), 
     getDataFakultas
 )
     
-remunerasiRouter.route('/fakultas/:fak/programstudi')
+remunerasiRouter.route('/programstudi')
 .get(
     authentication, 
-    restrictToRole('dekan'), 
-    authorizeScope(), 
-    getDaftarProdi
-)
-
-remunerasiRouter.route('/programstudi/:prodi')
-.get(
-    authentication, 
-    restrictToRole('dekan', 'kaprodi'), 
+    restrictToRole('admin', 'dekan', 'kaprodi'), 
     authorizeScope(), 
     getDataProdi
 )
 
-remunerasiRouter.route('/programstudi/:prodi/dosen')
+remunerasiRouter.route('/dosen')
 .get(
     authentication, 
-    restrictToRole('dekan', 'kaprodi'), 
-    authorizeScope(), 
-    getDaftarDosen
-)
-
-remunerasiRouter.route('/dosen/:nidn')
-.get(
-    authentication, 
-    restrictToRole('dekan', 'kaprodi', 'dosen'), 
+    restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
     getDataDosen
 )
 
-remunerasiRouter.route('/dosen/:nidn/pendidikan')
+remunerasiRouter.route('/pendidikan')
 .get(
     authentication, 
-    restrictToRole('dekan', 'kaprodi', 'dosen'), 
+    restrictToRole('admin','dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
     getPendidikan
 )
 
-remunerasiRouter.route('/dosen/:nidn/pelaksanaan-pendidikan')
+remunerasiRouter.route('/pelaksanaan-pendidikan')
 .get(
     authentication, 
-    restrictToRole('dekan', 'kaprodi', 'dosen'), 
+    restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
     getPelaksanaanPendidikan
 )
 
-remunerasiRouter.route('/dosen/:nidn/penelitian')
+remunerasiRouter.route('/penelitian')
 .get(
     authentication, 
-    restrictToRole('dekan', 'kaprodi', 'dosen'), 
+    restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
     getPenelitian
 )
 
-remunerasiRouter.route('/dosen/:nidn/pengabdian')
+remunerasiRouter.route('/pengabdian')
 .get(
     authentication, 
-    restrictToRole('dekan', 'kaprodi', 'dosen'), 
+    restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
     getPengabdian
 )
 
-remunerasiRouter.route('/dosen/:nidn/penunjang')
+remunerasiRouter.route('/penunjang')
 .get(
     authentication, 
-    restrictToRole('dekan', 'kaprodi', 'dosen'), 
+    restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
     getPenunjang
 )

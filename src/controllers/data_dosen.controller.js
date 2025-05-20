@@ -8,40 +8,72 @@ const reverseSlugify = (slug) => {
     return slug.replace(/-/g, ' ');
 };
 
-const getDaftarDosen = catchAsync (async (req, res, next) => {
-    const namaProdi = reverseSlugify(req.params.prodi);
-    const dataProdi = await db.ProgramStudi.findOne({
-        where: {nm_prodi: {[Op.iLike]: namaProdi}}
-    });
-
-    if (!dataProdi) {
-        return next (new catchError('Program Studi not found', 400))
-    }
-
-    const daftarDosen = await db.DataDosen.findAll({ 
-        where: {prodi: dataProdi.kode}, 
-    });
-
-    return res.json({
-        status: 'success',
-        daftarDosen: daftarDosen
-    });
-});
-
 const getDataDosen = catchAsync (async (req, res, next) => {
-    const nidnDosen = req.params.nidn;
-    const dataDosen = await db.DataDosen.findOne({
-        where: {nidn: nidnDosen}
+    const {fakultas, prodi, nidn, nama, limit = 10, offset = 0, sort = 'nidn', order = 'ASC', search} = req.query;
+    
+    let whereFakultas = {};
+    let whereProdi = {};
+    let whereDosen = {};
+
+    if (fakultas){
+        whereFakultas.nm_fakultas = {
+            [Op.iLike]: `%${fakultas}%`
+        };
+    }
+
+    if (prodi){
+        whereProdi.nm_prodi = {
+            [Op.iLike]: `%${prodi}%`
+        };
+    } 
+
+    if (nidn){
+        whereDosen.nidn = nidn;
+    }
+
+    if (search){
+        whereDosen.nama = {
+            [Op.iLike]: `%${search}%`
+        };
+    }
+
+    const include = [];
+
+    if (fakultas){
+        include.push({
+            model: db.Fakultas,
+            as: 'ProdibyFak',
+            where: whereFakultas,
+            required: true
+        })
+    }
+
+    if (prodi){
+        include.push({
+            model: db.ProgramStudi,
+            as: 'ProdibyFak',
+            where: whereProdi,
+            required: true
+        })
+    }
+    
+    const dataDosen = await db.DataDosen.findAll({
+        where : whereDosen,
+        limit: parseInt(limit),
+        offset: parseInt(offset),
+        order: [[sort, order.toUpperCase()]],
+        include: include
     });
 
-    if (!dataDosen) {
-        return next (new catchError('Lecturer not found', 400))
+    if (dataDosen.length === 0) {
+        return next (new catchError('Data not found', 400))
     }
 
     return res.json({
         status: 'success',
-        dataDosen: dataDosen
-    })
+        dataDosen : dataDosen
+    });
 });
 
-export { getDaftarDosen, getDataDosen }
+
+export { getDataDosen }
