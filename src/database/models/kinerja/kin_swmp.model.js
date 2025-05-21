@@ -550,7 +550,7 @@ export default (sequelize, DataTypes) => {
         });
         KinSwmp.belongsTo(models.DataDosen, {
             foreignKey: 'id_dosen',
-            as: 'DataDosen_KinSwmp'
+            as: 'Dosen_Kin'
         });
     }
     return KinSwmp;

@@ -39,7 +39,7 @@ function trimAllStrings(obj) {
     return obj;
 }
 
-function trimResponseMiddleware(req, res, next) {
+function trimResponse(req, res, next) {
     const originalJson = res.json;
 
     res.json = function (data) {
@@ -52,4 +52,4 @@ function trimResponseMiddleware(req, res, next) {
     next();
 }
 
-export default trimResponseMiddleware;
+export default trimResponse;
