@@ -7,11 +7,11 @@ import { remunerasiRouter } from './routes/remunerasi.route.js';
 import { catchAsync } from './utils/catchAsync.js';
 import { catchError } from './utils/catchError.js';
 import { globalErrorHandler } from './controllers/error.controller.js';
-import trimResponseMiddleware from './middleware/trimResponse.js';
+import trimResponse from './middleware/trimResponse.js';
 
 const app = express();
 app.use(express.json());
-app.use(trimResponseMiddleware);
+app.use(trimResponse);
 
 // Routes
 app.use('/api/auth', authRouter)

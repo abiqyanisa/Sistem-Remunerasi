@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt";
-import slugify from 'slugify';
 
 import db from '../database/models/model.js';
 import { catchAsync } from "../utils/catchAsync.js";
@@ -12,11 +11,6 @@ const generateToken = (payload) => {
     return jwt.sign(payload, process.env.JWT_SECRET_KEY, {
         expiresIn: process.env.JWT_EXPIRES_IN
     })
-};
-
-const reverseSlugify = (slug) => {
-    if (typeof slug !== 'string') return '';
-    return slug.replace(/-/g, ' ');
 };
 
 const login = catchAsync(async (req, res, next) => {
@@ -71,26 +65,19 @@ const login = catchAsync(async (req, res, next) => {
     const dekanFak = await db.Fakultas.findOne({
         where: { kode: dosen.fakultas } 
     })
-    const slugFak = dekanFak.singkatan 
-    if (user.role === 'dekan') {
-        redirectPath = `/api/fakultas/${slugify(slugFak || '', { lower: true })}`;
-    }
+    console.log(dekanFak)
     
     // 🔁 Kaprodi
     const kaProdi = await db.ProgramStudi.findOne({
         where: { kode: dosen.prodi }
     })
-    const slugProdi = kaProdi.nm_prodi
-    if (user.role === 'kaprodi') {
-        redirectPath = `/api/programstudi/${slugify(slugProdi || '', { lower: true })}`;
-    }
 
     // ⬇️ Generate token dengan kode fakultas dan prodi
     const token = generateToken({
         nidn: user.nidn,
         role: user.role,
-        fakultas: slugFak,
-        prodi: slugProdi,
+        fakultas: dekanFak.kode,
+        prodi: kaProdi.kode,
     });
 
     return res.status(200).json({
@@ -99,8 +86,8 @@ const login = catchAsync(async (req, res, next) => {
         user: {
             nidn: user.nidn,
             role: user.role,
-            fakultas: slugFak,
-            prodi: slugProdi
+            fakultas: dekanFak.kode,
+            prodi: kaProdi.kode
         },
         redirectPath
     });

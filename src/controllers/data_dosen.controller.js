@@ -3,11 +3,6 @@ import db from "../database/models/model.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
 
-const reverseSlugify = (slug) => {
-    if (typeof slug !== 'string') return '';
-    return slug.replace(/-/g, ' ');
-};
-
 const getDataDosen = catchAsync (async (req, res, next) => {
     const {fakultas, prodi, nidn, limit = 10, offset = 0, sort = 'nidn', order = 'ASC', search} = req.query;
     

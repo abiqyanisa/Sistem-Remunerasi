@@ -5,7 +5,8 @@ import { getDataFakultas } from '../controllers/fakultas.controller.js';
 import { getDataProdi } from '../controllers/program_studi.controller.js';
 import { authentication, restrictToRole} from '../controllers/auth.controller.js';
 import { getDataDosen } from '../controllers/data_dosen.controller.js';
-import { getPelaksanaanPendidikan, getPendidikan, getPenelitian, getPengabdian, getPenunjang } from '../controllers/bidang.controller.js';
+import { getKinerja } from '../controllers/bidang.controller.js';
+import { filterDosenByFakultas, filterDosenByKin, filterDosenByProdi } from '../middleware/foundModel.js';
 
 const remunerasiRouter = express.Router();
 
@@ -33,12 +34,23 @@ remunerasiRouter.route('/dosen')
     getDataDosen
 )
 
+const setKodeBidang = (kode) => {
+    return (req, res, next) => {
+        req.kodeBidang = kode;
+        next();
+    };
+};
+
 remunerasiRouter.route('/pendidikan')
 .get(
     authentication, 
-    restrictToRole('admin','dekan', 'kaprodi', 'dosen'), 
+    restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
-    getPendidikan
+    filterDosenByFakultas,
+    filterDosenByProdi,
+    filterDosenByKin,
+    setKodeBidang(1),
+    getKinerja
 )
 
 remunerasiRouter.route('/pelaksanaan-pendidikan')
@@ -46,7 +58,11 @@ remunerasiRouter.route('/pelaksanaan-pendidikan')
     authentication, 
     restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
-    getPelaksanaanPendidikan
+    filterDosenByFakultas,
+    filterDosenByProdi,
+    filterDosenByKin,
+    setKodeBidang(2),
+    getKinerja
 )
 
 remunerasiRouter.route('/penelitian')
@@ -54,7 +70,11 @@ remunerasiRouter.route('/penelitian')
     authentication, 
     restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
-    getPenelitian
+    filterDosenByFakultas,
+    filterDosenByProdi,
+    filterDosenByKin,
+    setKodeBidang(3),
+    getKinerja
 )
 
 remunerasiRouter.route('/pengabdian')
@@ -62,7 +82,11 @@ remunerasiRouter.route('/pengabdian')
     authentication, 
     restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
-    getPengabdian
+    filterDosenByFakultas,
+    filterDosenByProdi,
+    filterDosenByKin,
+    setKodeBidang(4),
+    getKinerja
 )
 
 remunerasiRouter.route('/penunjang')
@@ -70,7 +94,11 @@ remunerasiRouter.route('/penunjang')
     authentication, 
     restrictToRole('admin', 'dekan', 'kaprodi', 'dosen'), 
     authorizeScope(), 
-    getPenunjang
+    filterDosenByFakultas,
+    filterDosenByProdi,
+    filterDosenByKin,
+    setKodeBidang(5),
+    getKinerja
 )
 
 export { remunerasiRouter }
