@@ -2,11 +2,6 @@ import { Op } from 'sequelize';
 import db from '../database/models/model.js';
 import { catchError } from '../utils/catchError.js';
 
-const reverseSlugify = (slug) => {
-    if (typeof slug !== 'string') return '';
-    return slug.replace(/-/g, ' ');
-};
-
 const authorizeScope = () => {
     return async (req, res, next) => {
         const { role, fakultas, prodi, nidn } = req.user;
@@ -105,6 +100,9 @@ const authorizeScope = () => {
                     return next(new catchError('Lecturer outside your faculty', 403));
                 }
             }
+            return next();
+        }
+        if (role === 'admin') {
             return next();
         }
         return next(new catchError('Access Denied: unknown role', 403));

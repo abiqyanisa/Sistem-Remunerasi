@@ -44,29 +44,58 @@ const getKinerja = catchAsync (async (req, res, next) => {
         include: [{
             model: db.UnsurKegiatanRemun,
             as: 'Bidang_Unsur',
+            required: false,
             include: [{
                 model: db.KegiatanRemun,
                 as: 'Unsur_Kegiatan',
-                include: [kegiatanKinInclude]
+                required: false,
+                include: // [kegiatanKinInclude]
+                [{
+                    model: db.KinSwmp,
+                    as: 'Kegiatan_Kin',
+                    required: false,
+                    where: Object.keys(where).length > 0 ? where : undefined,
+                    limit: parseInt(limit),
+                    offset: parseInt(offset),
+                    order: [[sort, order.toUpperCase()]],
+                }]
             }]
         }]
     });
 
-    // cek apakah kinerjanya ada
-    const kegiatan = Kinerja?.Bidang_Unsur?.flatMap(u =>
-    u.Unsur_Kegiatan?.flatMap(k => k.Kegiatan_Kin) ?? []
-    ) ?? [];
-    // kalo gaada
-    if (kegiatan.length === 0) {
-    return next(new catchError('Kinerja not found', 404));
+    // // cek apakah kinerjanya ada
+    if (!Kinerja) {
+        return next(new catchError('Kinerja not found', 404));
     }
 
-    // cetak Kinerja Penunjang
-    const plainKinerja = Kinerja?.toJSON?.() || {};
+    // Ubah ke plain JS object supaya bisa dimodifikasi bebas
+    const kinerjaPlain = Kinerja.toJSON();
+
+    kinerjaPlain.Bidang_Unsur = (kinerjaPlain.Bidang_Unsur ?? [])
+    .map(unsur => {
+        // Filter Unsur_Kegiatan yang punya Kegiatan_Kin
+        const filteredUnsurKegiatan = (unsur.Unsur_Kegiatan ?? [])
+        .filter(kegiatan =>
+            (kegiatan.Kegiatan_Kin ?? []).length > 0
+        );
+
+        if (filteredUnsurKegiatan.length === 0) return null;
+
+        return {
+            ...unsur,
+            Unsur_Kegiatan: filteredUnsurKegiatan
+        };
+    })
+    .filter(Boolean);
+
+    if (kinerjaPlain.Bidang_Unsur.length === 0) {
+        return next(new catchError('Kinerja not found', 404));
+    }
+
     // hasil
     return res.json({
         status: 'success',
-        penunjang: removeNulls(plainKinerja)
+        penunjang: removeNulls(kinerjaPlain)
     });
 });
 

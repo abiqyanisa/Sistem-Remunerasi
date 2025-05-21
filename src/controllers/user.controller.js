@@ -7,34 +7,35 @@ import { catchError } from "../utils/catchError.js";
 const validRoles = db.User.getAttributes().role.values;
 
 const getAllUser = catchAsync (async (req, res, next) => {
-    const dataUser = await db.User.findAll({
+    const daftarUser = await db.User.findAll({
         include: {
             model: db.DataDosen,
             as: 'dataDosen',
             required: true
         }
     });
-    return res.json({
-        status: 'success',
-        dataUser
-    });
-});
-
-const getUserByNidn = catchAsync (async (req, res, next) => {
-    const userNidn = req.params.nidn;
+    const userNidn = req.query.nidn;
+    
+    // getUser by NIDN
     // ambil dan cek apakah /:nidn sesuai dengan nidn data dosen
-    const dataUser = await db.User.findByPk(userNidn, {
-        include: {
-            model: db.DataDosen,
-            as: 'dataDosen'
+    if(userNidn) {
+        const dataUser = await db.User.findByPk(userNidn, {
+            include: {
+                model: db.DataDosen,
+                as: 'dataDosen'
+            }
+        });
+        if (!dataUser) {
+            return next (new catchError('User not found', 404));
         }
-    });
-    if (!dataUser) {
-        return next (new catchError('User not found', 404));
+        return res.json({
+            status: 'success',
+            dataUser
+        });
     }
     return res.json({
         status: 'success',
-        dataUser
+        daftarUser
     });
 });
 
@@ -66,7 +67,7 @@ const addUser = catchAsync (async (req, res, next) => {
 });
 
 const updateUser = catchAsync (async (req, res, next) => {
-    const userNidn = req.params.nidn;
+    const userNidn = req.query.nidn;
     const body = req.body;
     // get user by nidn
     const dataUser = await db.User.findByPk(userNidn);
@@ -88,7 +89,7 @@ const updateUser = catchAsync (async (req, res, next) => {
 });
 
 const deleteUser = catchAsync (async (req, res, next) => {
-    const userNidn = req.params.nidn;
+    const userNidn = req.query.nidn;
     // get user by nidn
     const dataUser = await db.User.findByPk(userNidn);
     // cek data user
@@ -103,4 +104,4 @@ const deleteUser = catchAsync (async (req, res, next) => {
     })
 });
 
-export { getAllUser, getUserByNidn, addUser, updateUser, deleteUser }
+export { getAllUser, addUser, updateUser, deleteUser }
