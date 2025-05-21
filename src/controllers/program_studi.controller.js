@@ -4,7 +4,7 @@ import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
 
 const getDataProdi = catchAsync (async (req, res, next) => {
-    const {fakultas, prodi, nidn, limit = 10, offset = 0, sort = 'nm_prodi', order = 'ASC', search} = req.query;
+    const {fakultas, prodi, nidn, limit = 10, offset = 0, sort = 'kode', order = 'ASC', search} = req.query;
     
     let whereFakultas = {};
     let whereProdi = {};

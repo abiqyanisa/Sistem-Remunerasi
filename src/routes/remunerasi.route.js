@@ -1,9 +1,9 @@
 import express from 'express';
 import authorizeScope from '../middleware/authorizeScope.js';
 
+import { authentication, restrictToRole} from '../controllers/auth.controller.js';
 import { getDataFakultas } from '../controllers/fakultas.controller.js';
 import { getDataProdi } from '../controllers/program_studi.controller.js';
-import { authentication, restrictToRole} from '../controllers/auth.controller.js';
 import { getDataDosen } from '../controllers/data_dosen.controller.js';
 import { getKinerja } from '../controllers/bidang.controller.js';
 import { filterDosenByFakultas, filterDosenByKin, filterDosenByProdi } from '../middleware/foundModel.js';

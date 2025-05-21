@@ -15,8 +15,6 @@ const filterDosenByFakultas = async (req, res, next) => {
         },
         });
 
-        // console.log(foundDosenbyFak)
-
         if (!foundDosenbyFak || foundDosenbyFak.length === 0) {
         return next(new catchError('Dosen in that Fakultas not found', 404));
         }
@@ -43,8 +41,6 @@ const filterDosenByProdi = async (req, res, next) => {
             as: 'DosenbyProdi',
         },
         });
-
-        // console.log(foundDosenbyProdi)
 
         if (!foundDosenbyProdi || foundDosenbyProdi.length === 0) {
         return next(new catchError('Dosen in that Prodi not found', 404));

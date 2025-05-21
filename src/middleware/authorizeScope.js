@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import db from '../database/models/model.js';
 import { catchError } from '../utils/catchError.js';
 
@@ -45,7 +44,7 @@ const authorizeScope = () => {
                     return next (new catchError('Lecturer outside your Study Program', 403))
                 }
             }
-            
+            // ⚠️ tidak bisa akses fakultas
             if (reqFak) {
                 return next (new catchError('Access Denied: you cannot access faculty', 403))
             }
@@ -81,7 +80,6 @@ const authorizeScope = () => {
             }
             // ⚠️ jika ada reqNidn, pastikan dosen tersebut memang milik fakultasnya
             if (reqNidn) {
-                // ‼️ cek apakah params dosen berada di fakultas tersebut
                 const foundDosenbyFak = await db.DataDosen.findOne({
                     where: { nidn: reqNidn },
                     include: {
@@ -90,7 +88,7 @@ const authorizeScope = () => {
                         required: true
                     }
                 })
-                
+                // ‼️ cek apakah params dosen berada di fakultas tersebut
                 if (!foundDosenbyFak) {
                     return next(new catchError('Lecturer not found', 404));
                 }
