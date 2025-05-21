@@ -4,20 +4,20 @@ import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
 
 const getDataFakultas = catchAsync (async (req, res, next) => {
-    const {fakultas, prodi, nidn, limit = 10, offset = 0, sort = 'nm_fakultas', order = 'ASC', search} = req.query;
+    const {fakultas, prodi, nidn, limit = 10, offset = 0, sort = 'dekan', order = 'ASC', search} = req.query;
 
     let whereFakultas = {};
     let whereProdi = {};
     let whereDosen = {};
 
     if (fakultas){
-        whereFakultas.nm_fakultas = {
+        whereFakultas.kode = {
             [Op.iLike]: `%${fakultas}%`
         };
     }
 
     if (prodi){
-        whereProdi.nm_prodi = {
+        whereProdi.kode = {
             [Op.iLike]: `%${prodi}%`
         };
     } 

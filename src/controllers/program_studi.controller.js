@@ -11,13 +11,13 @@ const getDataProdi = catchAsync (async (req, res, next) => {
     let whereDosen = {};
 
     if (fakultas){
-        whereFakultas.nm_fakultas = {
+        whereFakultas.kode = {
             [Op.iLike]: `%${fakultas}%`
         };
     }
 
     if (prodi){
-        whereProdi.nm_prodi = {
+        whereProdi.kode = {
             [Op.iLike]: `%${prodi}%`
         };
     }
@@ -33,15 +33,6 @@ const getDataProdi = catchAsync (async (req, res, next) => {
     }
 
     const include = [];
-
-    if (fakultas){
-        include.push({
-            model: db.Fakultas,
-            as: 'ProdibyFak',
-            where: whereFakultas,
-            required: true
-        })
-    }
 
     if (nidn){
         include.push({

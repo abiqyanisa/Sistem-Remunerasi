@@ -9,20 +9,20 @@ const reverseSlugify = (slug) => {
 };
 
 const getDataDosen = catchAsync (async (req, res, next) => {
-    const {fakultas, prodi, nidn, nama, limit = 10, offset = 0, sort = 'nidn', order = 'ASC', search} = req.query;
+    const {fakultas, prodi, nidn, limit = 10, offset = 0, sort = 'nidn', order = 'ASC', search} = req.query;
     
     let whereFakultas = {};
     let whereProdi = {};
     let whereDosen = {};
 
     if (fakultas){
-        whereFakultas.nm_fakultas = {
+        whereFakultas.kode = {
             [Op.iLike]: `%${fakultas}%`
         };
     }
 
     if (prodi){
-        whereProdi.nm_prodi = {
+        whereProdi.kode = {
             [Op.iLike]: `%${prodi}%`
         };
     } 
@@ -36,33 +36,12 @@ const getDataDosen = catchAsync (async (req, res, next) => {
             [Op.iLike]: `%${search}%`
         };
     }
-
-    const include = [];
-
-    if (fakultas){
-        include.push({
-            model: db.Fakultas,
-            as: 'ProdibyFak',
-            where: whereFakultas,
-            required: true
-        })
-    }
-
-    if (prodi){
-        include.push({
-            model: db.ProgramStudi,
-            as: 'ProdibyFak',
-            where: whereProdi,
-            required: true
-        })
-    }
     
     const dataDosen = await db.DataDosen.findAll({
         where : whereDosen,
         limit: parseInt(limit),
         offset: parseInt(offset),
         order: [[sort, order.toUpperCase()]],
-        include: include
     });
 
     if (dataDosen.length === 0) {
