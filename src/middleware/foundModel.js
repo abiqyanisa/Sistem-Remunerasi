@@ -72,7 +72,6 @@ const filterDosenByKin = async (req, res, next) => {
                 as: 'Dosen_Kin',
             },
         });
-        // console.log(foundDosenbyKin)
 
         if (!foundDosenbyKin || foundDosenbyKin.length === 0) {
         return next(new catchError('Dosen not found', 404));

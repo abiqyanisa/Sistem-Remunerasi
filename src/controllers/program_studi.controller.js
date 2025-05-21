@@ -34,6 +34,16 @@ const getDataProdi = catchAsync (async (req, res, next) => {
 
     const include = [];
 
+    if (fakultas){
+        include.push({
+            model: db.Fakultas,
+            as: 'ProdibyFak',
+            attributes: [], 
+            where: fakultas ? { kode: { [Op.iLike]: `%${fakultas}%` } } : undefined,
+            required: !!fakultas
+        })
+    }
+
     if (nidn){
         include.push({
             model: db.DataDosen,

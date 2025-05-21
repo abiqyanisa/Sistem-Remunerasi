@@ -25,18 +25,6 @@ const getKinerja = catchAsync (async (req, res, next) => {
     if(tahun) {
         where.push({ tahun: tahun })
     }
-    
-    // cetak include Kin_Swmp
-    const kegiatanKinInclude = {
-        model: db.KinSwmp,
-        as: 'Kegiatan_Kin',
-        required: true,
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        order: [[sort, order.toUpperCase()]],
-        // hanya sertakan where jika array-nya tidak kosong
-        ...(Object.keys(where).length > 0 ? { where } : {[Op.and]: where})
-    };
 
     // cetak kinerja
     const Kinerja = await db.BidangKinerjaRemun.findOne({
