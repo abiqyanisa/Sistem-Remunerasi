@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import db from "../database/models/model.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
+import { validateFakultas, validateNidn, validateProdi } from "../middleware/dataValidator.js";
 
 import crypto from "crypto";
 import { getCache, setCache } from "../middleware/nodeCache.js"; // ganti dari redis ke node-cache
@@ -20,68 +21,56 @@ const getDataFakultas = catchAsync (async (req, res, next) => {
         return res.json(cachedData);
     }
 
+    // 🔎 Validasi input
+    if (!(await validateFakultas(fakultas))) {
+        return next(new catchError(`Faculty's code '${fakultas}' not found`, 404));
+    }
+
+    if (!(await validateProdi(prodi))) {
+        return next(new catchError(`Study Program's code '${prodi}' not found`, 404));
+    }
+
+    if (!(await validateNidn(nidn))) {
+        return next(new catchError(`Lecturer's NIDN '${nidn}' not found`, 404));
+    }
+
+    // 🔄 Build kondisi where
+    const whereFakultas = {};
+    if (fakultas) whereFakultas.kode = fakultas;
+    if (search) whereFakultas.nm_fakultas = { [Op.iLike]: `%${search}%`};
+    
     // 🔄 2. Query database kalau belum ada cache
-    let whereFakultas = {};
-    let whereProdi = {};
-    let whereDosen = {};
-
-    if (fakultas){
-        whereFakultas.kode = {
-            [Op.iLike]: `%${fakultas}%`
-        };
-    }
-
-    if (prodi){
-        whereProdi.kode = {
-            [Op.iLike]: `%${prodi}%`
-        };
-    } 
-
-    if (nidn){
-        whereDosen.nidn = nidn;
-    }
-
-    if (search){
-        whereFakultas.nm_fakultas = {
-            [Op.iLike]: `%${search}%`
-        };
-    }
-
     const include = [];
 
     if (prodi){
         include.push({
             model: db.ProgramStudi,
             as: 'ProdibyFak',
-            where: whereProdi,
+            where: { kode: prodi },
             required: true
-        })
+        });
     }
 
     if (nidn){
         include.push({
             model: db.DataDosen,
             as: 'DosenbyFak',
-            where: whereDosen,
+            where: { nidn: nidn },
             required: true
         })
     }
 
     const dataFakultas = await db.Fakultas.findAll({
         where : whereFakultas,
+        include,
         limit: parseInt(limit),
         offset: parseInt(offset),
         order: [[sort, order.toUpperCase()]],
-        include: include
     });
-
-    if (dataFakultas.length === 0) {
-        return next (new catchError('Fakultas not found', 400))
-    }
     
     const responseData = {
         status: 'success',
-        dataFakultas: dataFakultas
+        dataFakultas
     };
 
     // 💾 3. Simpan hasil ke cache (TTL: detik)

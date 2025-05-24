@@ -2,6 +2,7 @@ import { Op } from "sequelize";
 import db from "../database/models/model.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
+import { validateFakultas, validateNidn, validateProdi } from "../middleware/dataValidator.js";
 
 import crypto from "crypto";
 import { getCache, setCache } from "../middleware/nodeCache.js"; // ganti dari redis ke node-cache
@@ -20,50 +21,42 @@ const getDataProdi = catchAsync (async (req, res, next) => {
         return res.json(cachedData);
     }
 
+    // 🔎 Validasi input
+    if (!(await validateFakultas(fakultas))) {
+        return next(new catchError(`Faculty's code '${fakultas}' not found`, 404));
+    }
+
+    if (!(await validateProdi(prodi))) {
+        return next(new catchError(`Study Program's code '${prodi}' not found`, 404));
+    }
+
+    if (!(await validateNidn(nidn))) {
+        return next(new catchError(`Lecturer's NIDN '${nidn}' not found`, 404));
+    }
+
+    // 🔄 Build kondisi where
+    const whereProdi = {};
+    if (prodi) whereProdi.kode = prodi;
+    if (search) whereProdi.nm_prodi = { [Op.iLike]: `%${search}%` };
+    
     // 🔄 2. Query database kalau belum ada cache
-    let whereFakultas = {};
-    let whereProdi = {};
-    let whereDosen = {};
-
-    if (fakultas){
-        whereFakultas.kode = {
-            [Op.iLike]: `%${fakultas}%`
-        };
-    }
-
-    if (prodi){
-        whereProdi.kode = {
-            [Op.iLike]: `%${prodi}%`
-        };
-    }
-
-    if (nidn){
-        whereDosen.nidn = nidn;
-    }
-
-    if (search){
-        whereProdi.nm_prodi = {
-            [Op.iLike]: `%${search}%`
-        };
-    }
-
     const include = [];
 
     if (fakultas){
         include.push({
             model: db.Fakultas,
             as: 'ProdibyFak',
-            attributes: [], 
-            where: fakultas ? { kode: { [Op.iLike]: `%${fakultas}%` } } : undefined,
-            required: !!fakultas
-        })
+            attributes: [],
+            where: { kode: fakultas },
+            required: true
+        });
     }
 
     if (nidn){
         include.push({
             model: db.DataDosen,
             as: 'DosenbyProdi',
-            where: whereDosen,
+            where: { nidn: nidn },
             required: true
         })
     }
@@ -73,16 +66,12 @@ const getDataProdi = catchAsync (async (req, res, next) => {
         limit: parseInt(limit),
         offset: parseInt(offset),
         order: [[sort, order.toUpperCase()]],
-        include: include
+        include: include,
     });
-
-    if (dataProdi.length === 0) {
-        return next (new catchError('Prodi not found', 400))
-    }
 
     const responseData = {
         status: 'success',
-        dataProdi : dataProdi
+        dataProdi
     };
 
     // 💾 3. Simpan hasil ke cache (TTL: detik)
