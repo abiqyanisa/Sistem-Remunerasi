@@ -2,7 +2,6 @@ import { Op } from "sequelize";
 import db from "../database/models/model.js";
 import removeNulls from "../middleware/removeNulls.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { catchError } from "../utils/catchError.js";
 
 import crypto from "crypto";
 import { getCache, setCache } from "../middleware/nodeCache.js"; // ganti dari redis ke node-cache
@@ -59,7 +58,6 @@ const getKinerja = catchAsync(async (req, res, next) => {
         }]
     });
 
-    if (!Kinerja) return next(new catchError('Kinerja not found', 404));
 
     const kinerjaPlain = Kinerja.toJSON();
     kinerjaPlain.Bidang_Unsur = (kinerjaPlain.Bidang_Unsur ?? [])
@@ -69,8 +67,6 @@ const getKinerja = catchAsync(async (req, res, next) => {
             return { ...unsur, Unsur_Kegiatan: filtered };
         })
         .filter(Boolean);
-
-    if (!kinerjaPlain.Bidang_Unsur.length) return next(new catchError('Kinerja not found', 404));
 
     const responseData = {
         status: 'success',
