@@ -1,5 +1,4 @@
 import db from "../database/models/model.js";
-import { Op } from "sequelize";
 
 // Validasi fakultas
 export async function validateFakultas(kode) {

@@ -65,10 +65,10 @@ const login = catchAsync(async (req, res, next) => {
         return next(new catchError('Data dosen tidak ditemukan', 404));
     }
 
-    // 🔁 Dosen
+    // Dosen
     let redirectPath = '/api/dosen';
 
-    // 🔁 Dekan
+    // Dekan
     const dekanFak = await db.Fakultas.findOne({
         where: { kode: dosen.fakultas } 
     })
@@ -76,7 +76,7 @@ const login = catchAsync(async (req, res, next) => {
         redirectPath = `/api/fakultas?fakultas=${dekanFak.kode}`
     }
     
-    // 🔁 Kaprodi
+    // Kaprodi
     const kaProdi = await db.ProgramStudi.findOne({
         where: { kode: dosen.prodi }
     })
@@ -84,7 +84,7 @@ const login = catchAsync(async (req, res, next) => {
         redirectPath = `/api/programstudi?prodi=${kaProdi.kode}`
     }
 
-    // ⬇️ Generate token dengan kode fakultas dan prodi
+    // ⬇Generate token dengan kode fakultas dan prodi
     const token = generateToken({
         nidn: user.nidn,
         role: user.role,
@@ -131,7 +131,7 @@ const authentication = catchAsync (async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
         const freshUser = await db.User.findByPk(decoded.nidn);
-        // ✅ Simpan payload token ke req.user
+        // Simpan payload token ke req.user
         req.user = decoded;
         req.db = { User: freshUser };
         next();
