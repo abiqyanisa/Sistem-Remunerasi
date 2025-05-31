@@ -1,16 +1,16 @@
 import dotenv from 'dotenv';
-dotenv.config();
 import express from 'express';
+import cors from "cors";
+import cookieParser from 'cookie-parser';
+import trimResponse from './middleware/trimResponse.js';
 import { authRouter } from './routes/auth.route.js';
 import { userRouter } from './routes/user.route.js';
 import { remunerasiRouter } from './routes/remunerasi.route.js';
 import { catchAsync } from './utils/catchAsync.js';
 import { catchError } from './utils/catchError.js';
 import { globalErrorHandler } from './controllers/error.controller.js';
-import trimResponse from './middleware/trimResponse.js';
-import cors from "cors";
-import cookieParser from 'cookie-parser';
 
+dotenv.config();
 const app = express();
 app.use(
     cors({

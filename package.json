@@ -12,6 +12,7 @@
     "seed": "node src/utils/seed.js",
     "seed:undo": "node src/utils/seed-undo.js",
     "start-dev": "set NODE_ENV=development && nodemon ./src/main.js",
+    "start-prod": "set NODE_ENV=production && nodemon ./src/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {

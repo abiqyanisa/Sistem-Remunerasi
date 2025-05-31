@@ -1,9 +1,8 @@
 import { Op } from "sequelize";
+import crypto from "crypto";
 import db from "../database/models/model.js";
 import removeNulls from "../middleware/removeNulls.js";
 import { catchAsync } from "../utils/catchAsync.js";
-
-import crypto from "crypto";
 import { getCache, setCache } from "../middleware/nodeCache.js";
 
 const getKinerja = catchAsync(async (req, res, next) => {
@@ -16,8 +15,7 @@ const getKinerja = catchAsync(async (req, res, next) => {
         limit = 10,
         offset = 0,
         sort = 'kode',
-        order = 'ASC',
-        search
+        order = 'ASC'
     } = req.query;
 
     // Buat cache key unik berbasis query
@@ -70,7 +68,7 @@ const getKinerja = catchAsync(async (req, res, next) => {
 
     const responseData = {
         status: 'success',
-        penunjang: removeNulls(kinerjaPlain)
+        bidang: removeNulls(kinerjaPlain)
     };
 
     // Simpan hasil ke cache (TTL: detik)
