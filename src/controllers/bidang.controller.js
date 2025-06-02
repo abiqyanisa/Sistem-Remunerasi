@@ -1,10 +1,9 @@
 import { Op } from "sequelize";
+import crypto from "crypto";
 import db from "../database/models/model.js";
 import removeNulls from "../middleware/removeNulls.js";
 import { catchAsync } from "../utils/catchAsync.js";
-
-import crypto from "crypto";
-import { getCache, setCache } from "../middleware/nodeCache.js"; // ganti dari redis ke node-cache
+import { getCache, setCache } from "../middleware/nodeCache.js";
 
 const getKinerja = catchAsync(async (req, res, next) => {
     const kodeBidang = req.kodeBidang;
@@ -16,22 +15,21 @@ const getKinerja = catchAsync(async (req, res, next) => {
         limit = 10,
         offset = 0,
         sort = 'kode',
-        order = 'ASC',
-        search
+        order = 'ASC'
     } = req.query;
 
-    // 🔐 Buat cache key unik berbasis query
+    // Buat cache key unik berbasis query
     const cacheKeyRaw = `Kinerja:${kodeBidang}:${JSON.stringify(req.query)}`;
     const cacheKey = crypto.createHash('md5').update(cacheKeyRaw).digest('hex');
 
-    // 🔍 1. Cek cache lokal
+    // Cek cache lokal
     const cachedData = getCache(cacheKey);
     if (cachedData) {
-        console.log("✅ Serve Get Kinerja from node-cache");
+        console.log("Serve Get Kinerja from node-cache");
         return res.json(cachedData);
     }
 
-    // 🔄 2. Query database kalau belum ada cache
+    // Query database kalau belum ada cache
     let where = [];
     if (fakultas) where.push({ id_dosen: { [Op.in]: req.nidnListByFak } });
     if (prodi) where.push({ id_dosen: { [Op.in]: req.nidnListByProdi } });
@@ -70,13 +68,13 @@ const getKinerja = catchAsync(async (req, res, next) => {
 
     const responseData = {
         status: 'success',
-        penunjang: removeNulls(kinerjaPlain)
+        bidang: removeNulls(kinerjaPlain)
     };
 
-    // 💾 3. Simpan hasil ke cache (TTL: detik)
+    // Simpan hasil ke cache (TTL: detik)
     setCache(cacheKey, responseData, 3600);
 
-    // 🟢 4. Kirim response
+    // Kirim response
     return res.json(responseData);
 });
 

@@ -5,23 +5,23 @@ import { catchError } from "../utils/catchError.js";
 import { validateFakultas, validateNidn, validateProdi } from "../middleware/dataValidator.js";
 
 import crypto from "crypto";
-import { getCache, setCache } from "../middleware/nodeCache.js"; // ganti dari redis ke node-cache
+import { getCache, setCache } from "../middleware/nodeCache.js";
 
 const getDataProdi = catchAsync (async (req, res, next) => {
     const {fakultas, prodi, nidn, limit = 10, offset = 0, sort = 'kode', order = 'ASC', search} = req.query;
     
-    // 🔐 Buat cache key unik berbasis query
+    // Buat cache key unik berbasis query
     const cacheKeyRaw = `Prodi:${JSON.stringify(req.query)}`;
     const cacheKey = crypto.createHash('md5').update(cacheKeyRaw).digest('hex');
 
-    // 🔍 1. Cek cache lokal
+    // Cek cache lokal
     const cachedData = getCache(cacheKey);
     if (cachedData) {
-        console.log("✅ Serve Get Prodi from node-cache");
+        console.log("Serve Get Prodi from node-cache");
         return res.json(cachedData);
     }
 
-    // 🔎 Validasi input
+    // Validasi input
     if (!(await validateFakultas(fakultas))) {
         return next(new catchError(`Faculty's code '${fakultas}' not found`, 404));
     }
@@ -34,12 +34,12 @@ const getDataProdi = catchAsync (async (req, res, next) => {
         return next(new catchError(`Lecturer's NIDN '${nidn}' not found`, 404));
     }
 
-    // 🔄 Build kondisi where
+    // Build kondisi where
     const whereProdi = {};
     if (prodi) whereProdi.kode = prodi;
     if (search) whereProdi.nm_prodi = { [Op.iLike]: `%${search}%` };
     
-    // 🔄 2. Query database kalau belum ada cache
+    // Query database kalau belum ada cache
     const include = [];
 
     if (fakultas){
@@ -74,10 +74,10 @@ const getDataProdi = catchAsync (async (req, res, next) => {
         dataProdi
     };
 
-    // 💾 3. Simpan hasil ke cache (TTL: detik)
+    // Simpan hasil ke cache (TTL: detik)
     setCache(cacheKey, JSON.parse(JSON.stringify(responseData)), 3600);
 
-    // 🟢 4. Kirim response
+    // Kirim response
     return res.json(responseData);
 });
 
