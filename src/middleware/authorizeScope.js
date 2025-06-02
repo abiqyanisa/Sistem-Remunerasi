@@ -58,6 +58,7 @@ const authorizeScope = () => {
                     return next(new catchError('Access Denied: not your faculty', 403));
                 }
             }
+
             // ⚠️ jika ada reqProdi, pastikan prodi tersebut memang milik fakultasnya
             if (reqProdi) {
                 const foundProdibyFak = await db.ProgramStudi.findOne({
@@ -68,16 +69,19 @@ const authorizeScope = () => {
                         required: true
                     }
                 });
+
                 // ‼️ cek apakah params prodi berada di fakultas tersebut
                 if (!foundProdibyFak || reqProdi !== foundProdibyFak.kode.trim()) {
                     return next(new catchError('Study program not found', 404));
                 }
+
                 // ‼️ cek apakah fakultas dari prodi tersebut sama dengan fakultas pengguna
                 const prodiFromFak = foundProdibyFak.ProdibyFak.kode;
                 if (fakultas !== prodiFromFak) {
                     return next(new catchError('Study program outside your faculty', 403));
                 }
             }
+
             // ⚠️ jika ada reqNidn, pastikan dosen tersebut memang milik fakultasnya
             if (reqNidn) {
                 const foundDosenbyFak = await db.DataDosen.findOne({
@@ -88,10 +92,12 @@ const authorizeScope = () => {
                         required: true
                     }
                 })
+
                 // ‼️ cek apakah params dosen berada di fakultas tersebut
                 if (!foundDosenbyFak) {
                     return next(new catchError('Lecturer not found', 404));
                 }
+                
                 // ‼️ cek apakah fakultas dari dosen tersebut sama dengan fakultas pengguna
                 const dosenFromFak = foundDosenbyFak.DosenbyFak.kode;
                 if (fakultas !== dosenFromFak || reqNidn !== foundDosenbyFak.nidn.trim()) {
