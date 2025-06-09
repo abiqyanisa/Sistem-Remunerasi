@@ -75,6 +75,7 @@ const getDataFakultas = catchAsync (async (req, res, next) => {
 
     // Simpan hasil ke cache (TTL: detik)
     setCache(cacheKey, JSON.parse(JSON.stringify(responseData)), 3600);
+    res.set('Cache-Control', 'public, max-age=3600');
 
     // Kirim response
     return res.json(responseData);

@@ -72,7 +72,8 @@ const getKinerja = catchAsync(async (req, res, next) => {
     };
 
     // Simpan hasil ke cache (TTL: detik)
-    setCache(cacheKey, responseData, 3600);
+    setCache(cacheKey, responseData, 3600); //be
+    res.set('Cache-Control', 'public, max-age=3600'); //fe
 
     // Kirim response
     return res.json(responseData);
