@@ -6,19 +6,10 @@ import { catchError } from "../utils/catchError.js";
 
 const validRoles = db.User.getAttributes().role.values;
 
-const getAllUser = catchAsync (async (req, res, next) => {
-    const daftarUser = await db.User.findAll({
-        include: {
-            model: db.DataDosen,
-            as: 'dataDosen',
-            required: true
-        }
-    });
-    const userNidn = req.query.nidn;
-    
-    // getUser by NIDN
-    // ambil dan cek apakah /:nidn sesuai dengan nidn data dosen
-    if(userNidn) {
+const getAllUser = catchAsync(async (req, res, next) => {
+    const { nidn: userNidn, role, limit = 10, offset = 0, sort = 'nidn', order = 'ASC' } = req.query;
+
+    if (userNidn) {
         const dataUser = await db.User.findByPk(userNidn, {
             include: {
                 model: db.DataDosen,
@@ -26,13 +17,31 @@ const getAllUser = catchAsync (async (req, res, next) => {
             }
         });
         if (!dataUser) {
-            return next (new catchError('User not found', 404));
+            return next(new catchError('User not found', 404));
         }
         return res.json({
             status: 'success',
             dataUser
         });
     }
+
+    const whereCondition = {};
+    if (role) {
+        whereCondition.role = role; 
+    }
+
+    const daftarUser = await db.User.findAll({
+        where: whereCondition,
+        include: {
+            model: db.DataDosen,
+            as: 'dataDosen',
+            required: true
+        },
+        limit: parseInt(limit),
+        offset: parseInt(offset),
+        order: [[sort, order.toUpperCase()]] 
+    });
+
     return res.json({
         status: 'success',
         daftarUser
