@@ -90,6 +90,16 @@ const updateUser = catchAsync (async (req, res, next) => {
     }
     // ganti menjadi role terbaru
     dataUser.role = body.role;
+
+    // Jika password diisi, validasi dan update
+    if (body.password || body.confirmPassword) {
+        // if (password !== confirmPassword) {
+        //     return next(new catchError('Passwords do not match', 400));
+        // }
+        dataUser.password = body.password;
+        dataUser.confirmPassword = body.confirmPassword;
+    }
+
     const updatedDataUser = await dataUser.save();
     return res.status(200).json({
         status: 'success',
