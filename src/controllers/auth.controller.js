@@ -15,17 +15,14 @@ const generateToken = (payload) => {
 
 const login = catchAsync(async (req, res, next) => {
     const { nidn, password } = req.body;
-
     if (!nidn || !password) {
         return next(new catchError('Please provide nidn and password', 400));
     }
-
+    // cek user
     const user = await db.User.findOne({ where: { nidn } });
-
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return next(new catchError('Incorrect nidn or password', 401));
     }
-    
     // Admin langsung return
     if (user.role === 'admin') {
         const token = generateToken({
@@ -45,7 +42,6 @@ const login = catchAsync(async (req, res, next) => {
                 redirectPath: '/api/users'
             });
     }
-
     // Ambil data dosen dan relasinya
     const dosen = await db.DataDosen.findOne({
         where: { nidn },
@@ -60,14 +56,11 @@ const login = catchAsync(async (req, res, next) => {
             }
         ]
     });
-
     if (!dosen) {
         return next(new catchError('Data dosen tidak ditemukan', 404));
     }
-
     // Dosen
     let redirectPath = '/api/dosen';
-
     // Dekan
     const dekanFak = await db.Fakultas.findOne({
         where: { kode: dosen.fakultas } 
@@ -75,7 +68,6 @@ const login = catchAsync(async (req, res, next) => {
     if (user.role === 'dekan') {
         redirectPath = `/api/fakultas?fakultas=${dekanFak.kode}`
     }
-    
     // Kaprodi
     const kaProdi = await db.ProgramStudi.findOne({
         where: { kode: dosen.prodi }
@@ -83,15 +75,13 @@ const login = catchAsync(async (req, res, next) => {
     if (user.role === 'kaprodi') {
         redirectPath = `/api/programstudi?prodi=${kaProdi.kode}`
     }
-
-    // ⬇Generate token dengan kode fakultas dan prodi
+    // Generate token dengan kode fakultas dan prodi
     const token = generateToken({
         nidn: user.nidn,
         role: user.role,
         fakultas: dekanFak.kode,
         prodi: kaProdi.kode,
     });
-
     return res
         .cookie("token", token, {
             httpOnly: true,

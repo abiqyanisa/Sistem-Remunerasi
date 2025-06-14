@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import db from '../database/models/model.js';
-
 import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
 
@@ -8,7 +7,7 @@ const validRoles = db.User.getAttributes().role.values;
 
 const getAllUser = catchAsync(async (req, res, next) => {
     const { nidn: userNidn, role, limit = 10, offset = 0, sort = 'nidn', order = 'ASC' } = req.query;
-
+    // get user by nidn
     if (userNidn) {
         const dataUser = await db.User.findByPk(userNidn, {
             include: {
@@ -24,12 +23,12 @@ const getAllUser = catchAsync(async (req, res, next) => {
             dataUser
         });
     }
-
+    // get user by role
     const whereCondition = {};
     if (role) {
         whereCondition.role = role; 
     }
-
+    // get user
     const daftarUser = await db.User.findAll({
         where: whereCondition,
         include: {
@@ -41,7 +40,6 @@ const getAllUser = catchAsync(async (req, res, next) => {
         offset: parseInt(offset),
         order: [[sort, order.toUpperCase()]] 
     });
-
     return res.json({
         status: 'success',
         daftarUser
@@ -90,16 +88,11 @@ const updateUser = catchAsync (async (req, res, next) => {
     }
     // ganti menjadi role terbaru
     dataUser.role = body.role;
-
     // Jika password diisi, validasi dan update
     if (body.password || body.confirmPassword) {
-        // if (password !== confirmPassword) {
-        //     return next(new catchError('Passwords do not match', 400));
-        // }
         dataUser.password = body.password;
         dataUser.confirmPassword = body.confirmPassword;
     }
-
     const updatedDataUser = await dataUser.save();
     return res.status(200).json({
         status: 'success',
