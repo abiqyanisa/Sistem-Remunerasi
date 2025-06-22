@@ -23,25 +23,6 @@ const login = catchAsync(async (req, res, next) => {
     if (!user || !(await bcrypt.compare(password, user.password))) {
         return next(new catchError('Incorrect nidn or password', 401));
     }
-    // Admin langsung return
-    if (user.role === 'admin') {
-        const token = generateToken({
-            nidn: user.nidn,
-            role: user.role,
-        });
-        return res
-            .cookie("token", token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "Lax", // or 'None' if using cross-domain HTTPS
-                maxAge: 24 * 60 * 60 * 1000, // 1 day
-            })
-            .json({
-                status: 'success',
-                token,
-                redirectPath: '/api/users'
-            });
-    }
     // Ambil data dosen dan relasinya
     const dosen = await db.DataDosen.findOne({
         where: { nidn },
@@ -56,11 +37,19 @@ const login = catchAsync(async (req, res, next) => {
             }
         ]
     });
+    // Cek data dosen
     if (!dosen) {
         return next(new catchError('Data dosen tidak ditemukan', 404));
     }
+    let redirectPath = '';
     // Dosen
-    let redirectPath = '/api/dosen';
+    if (user.role === 'dosen') {
+        redirectPath = `/api/dosen?nidn=${dosen.nidn}`;
+    }
+    // Admin
+    if (user.role === 'admin') {
+        redirectPath = '/api/users';
+    }
     // Dekan
     const dekanFak = await db.Fakultas.findOne({
         where: { kode: dosen.fakultas } 
