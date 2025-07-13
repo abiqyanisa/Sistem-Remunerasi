@@ -29,7 +29,7 @@ const getAllUser = catchAsync(async (req, res, next) => {
         whereCondition.role = role; 
     }
     // get user
-    const daftarUser = await db.User.findAll({
+    const Users = await db.User.findAll({
         where: whereCondition,
         include: {
             model: db.DataDosen,
@@ -40,6 +40,7 @@ const getAllUser = catchAsync(async (req, res, next) => {
         offset: parseInt(offset),
         order: [[sort, order.toUpperCase()]] 
     });
+    const daftarUser = Users.map(user => user.toJSON());
     return res.json({
         status: 'success',
         daftarUser

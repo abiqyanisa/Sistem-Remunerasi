@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from "cors";
+import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import trimResponse from './middleware/trimResponse.js';
 import { authRouter } from './routes/auth.route.js';
@@ -21,6 +22,8 @@ app.use(
 app.use(express.json());
 app.use(trimResponse);
 app.use(cookieParser())
+app.use(helmet());
+app.disable('x-powered-by');
 
 // Routes
 app.use('/api/auth', authRouter)
