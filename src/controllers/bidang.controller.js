@@ -12,6 +12,7 @@ const getKinerja = catchAsync(async (req, res, next) => {
         prodi,
         nidn,
         tahun,
+        semester,
         limit = 10,
         offset = 0,
         sort = 'kode',
@@ -35,6 +36,7 @@ const getKinerja = catchAsync(async (req, res, next) => {
     if (prodi) where.push({ id_dosen: { [Op.in]: req.nidnListByProdi } });
     if (nidn) where.push({ id_dosen: req.nidnListByKin });
     if (tahun) where.push({ tahun });
+    if (semester) where.push({ semester });
 
     const Kinerja = await db.BidangKinerjaRemun.findOne({
         where: { kode: kodeBidang },

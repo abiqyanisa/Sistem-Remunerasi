@@ -44,9 +44,11 @@ const authorizeScope = () => {
                     return next (new catchError('Lecturer outside your Study Program', 403))
                 }
             }
-            // tidak bisa akses fakultas
+            // tidak bisa akses fakultas selain miliknya
             if (reqFak) {
-                return next (new catchError('Access Denied: you cannot access faculty', 403))
+                if (reqFak !== fakultas.trim()) {
+                    return next (new catchError('Access Denied: you cannot access faculty', 403))
+                }
             }
             return next();
         }

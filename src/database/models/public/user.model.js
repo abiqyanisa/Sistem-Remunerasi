@@ -79,7 +79,8 @@ export default (sequelize, DataTypes) => {
   {
     freezeTableName: true,
     modelName: 'User',
-    paranoid: false
+    paranoid: false,
+    timestamps: true
   });
   User.associate = models => {
     User.belongsTo(models.DataDosen, {
