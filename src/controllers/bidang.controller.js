@@ -53,6 +53,11 @@ const getKinerja = catchAsync(async (req, res, next) => {
                     limit: parseInt(limit),
                     offset: parseInt(offset),
                     order: [[sort, order.toUpperCase()]],
+                    include: [{
+                        model: db.DataDosen,
+                        as: 'Dosen_Kin',
+                        
+                    }]
                 }]
             }]
         }]
