@@ -5,6 +5,13 @@ import removeNulls from "../middleware/removeNulls.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import { getCache, setCache } from "../middleware/nodeCache.js";
 
+const semesterMAP = {
+  ganjil: 1,
+  genap: 4,
+  '1': 1,
+  '4': 4
+};
+
 const getKinerja = catchAsync(async (req, res, next) => {
     const kodeBidang = req.kodeBidang;
     const {
@@ -36,7 +43,9 @@ const getKinerja = catchAsync(async (req, res, next) => {
     if (prodi) where.push({ id_dosen: { [Op.in]: req.nidnListByProdi } });
     if (nidn) where.push({ id_dosen: req.nidnListByKin });
     if (tahun) where.push({ tahun });
-    if (semester) where.push({ semester });
+    
+    const semesterDB = semesterMAP[semester?.toLowerCase()];
+    if (semesterDB) where.push({ semester: String(semesterDB) });
 
     const Kinerja = await db.BidangKinerjaRemun.findOne({
         where: { kode: kodeBidang },
