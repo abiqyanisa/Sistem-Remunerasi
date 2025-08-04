@@ -70,7 +70,7 @@ const getDataProdi = catchAsync (async (req, res, next) => {
     });
 
     const responseData = {
-        status: 'success',
+        status: 'sukses',
         dataProdi
     };
 

@@ -85,7 +85,7 @@ const updateUser = catchAsync (async (req, res, next) => {
     }
     // cek apakah role terbaru sesuai opsi
     if (!validRoles.includes(body.role)) {
-        return next(new catchError(`Peran tidak valid. Opsi: ${validRoles.join(', ')}`, 400));
+        return next(new catchError(`Peran tidak valid. Pilihan yang tersedia: ${validRoles.join(', ')}`, 400));
     }
     // ganti menjadi role terbaru
     dataUser.role = body.role;

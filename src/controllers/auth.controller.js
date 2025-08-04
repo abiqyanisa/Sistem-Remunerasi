@@ -79,7 +79,7 @@ const login = catchAsync(async (req, res, next) => {
             maxAge: 24 * 60 * 60 * 1000, // 1 day
         })
         .status(200).json({
-            status: 'success',
+            status: 'sukses',
             token,
             user: {
                 nidn: user.nidn,
@@ -104,7 +104,7 @@ const authentication = catchAsync (async (req, res, next) => {
     }
     // 3. error handling if token was empty
     if (!token) {
-        return next(new catchError("Unauthorized: No token provided", 401));
+        return next(new catchError("Silakan login terlebih dahulu", 401));
     }
     
     try {
@@ -115,14 +115,14 @@ const authentication = catchAsync (async (req, res, next) => {
         req.db = { User: freshUser };
         next();
     } catch (err) {
-        return next (new catchError('Invalid or expired token', 401));
+        return next (new catchError('Sesi Anda telah habis. Silakan masuk kembali', 401));
     }
 });
 
 const restrictToRole = (...role) => {
     const checkPermission = (req, res, next) => {
         if (!role.includes(req.db.User.role)) {
-            return next (new catchError ('You dont have permission to perform this action', 403));
+            return next (new catchError ('Akses ditolak. Peran Anda tidak diizinkan mengakses fitur ini', 403));
         }
         return next();
     };

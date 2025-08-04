@@ -69,7 +69,7 @@ const getDataFakultas = catchAsync (async (req, res, next) => {
     });
     
     const responseData = {
-        status: 'success',
+        status: 'sukses',
         dataFakultas
     };
 
