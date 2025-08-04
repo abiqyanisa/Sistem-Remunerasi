@@ -23,15 +23,15 @@ const getDataFakultas = catchAsync (async (req, res, next) => {
 
     // Validasi input
     if (!(await validateFakultas(fakultas))) {
-        return next(new catchError(`Faculty's code '${fakultas}' not found`, 404));
+        return next(new catchError(`Kode fakultas '${fakultas}' tidak ditemukan`, 404));
     }
 
     if (!(await validateProdi(prodi))) {
-        return next(new catchError(`Study Program's code '${prodi}' not found`, 404));
+        return next(new catchError(`Kode program studi '${prodi}' tidak ditemukan`, 404));
     }
 
     if (!(await validateNidn(nidn))) {
-        return next(new catchError(`Lecturer's NIDN '${nidn}' not found`, 404));
+        return next(new catchError(`NIDN dosen '${nidn}' tidak ditemukan`, 404));
     }
 
     // Build kondisi where

@@ -83,7 +83,7 @@ const getKinerja = catchAsync(async (req, res, next) => {
         .filter(Boolean);
 
     const responseData = {
-        status: 'success',
+        status: 'sukses',
         bidang: removeNulls(kinerjaPlain)
     };
 
