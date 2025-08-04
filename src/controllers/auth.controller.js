@@ -16,12 +16,12 @@ const generateToken = (payload) => {
 const login = catchAsync(async (req, res, next) => {
     const { nidn, password } = req.body;
     if (!nidn || !password) {
-        return next(new catchError('Please provide nidn and password', 400));
+        return next(new catchError('Nidn dan kata sandi harus diisi', 400));
     }
     // cek user
     const user = await db.User.findOne({ where: { nidn } });
     if (!user || !(await bcrypt.compare(password, user.password))) {
-        return next(new catchError('Incorrect nidn or password', 401));
+        return next(new catchError('Nidn atau kata sandi tidak sesuai', 401));
     }
     // Ambil data dosen dan relasinya
     const dosen = await db.DataDosen.findOne({
