@@ -19,11 +19,11 @@ app.use(
         credentials: true,
     })
 );
-app.use(express.json());
-app.use(trimResponse);
-app.use(cookieParser())
-app.use(helmet());
-app.disable('x-powered-by');
+app.use(express.json()); //body request JSON
+app.use(trimResponse); //Membersihkan output
+app.use(cookieParser()) //Membaca cookie dari request
+app.use(helmet()); //Menambah keamanan dengan header HTTP
+app.disable('x-powered-by'); 
 
 // Routes
 app.use('/api/auth', authRouter)
@@ -40,4 +40,5 @@ app.use(catchAsync (async(req, res, next) => {
     throw new catchError(`can't find ${req.originalUrl} on this server`, 404);
 }));
 
+// Menangani semua error global 
 app.use(globalErrorHandler);
