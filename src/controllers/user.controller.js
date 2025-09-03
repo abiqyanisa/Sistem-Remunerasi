@@ -50,12 +50,16 @@ const getAllUser = catchAsync(async (req, res, next) => {
 const addUser = catchAsync (async (req, res, next) => {
     const body = req.body;
     if (!body) {
-        return next(new catchError('Silakan isi formulir dengan lengkap', 400))
+        return next(new catchError('Silakan isi form dengan lengkap', 400))
     };
     // cek apakah nidn yang dimasukkan sesuai dengan nidn data dosen
     const checkNidn = await db.DataDosen.findByPk(body.nidn)
     if (!checkNidn) {
+<<<<<<< HEAD
         return next (new catchError('Masukkan NIDN yang sesuai dengan data dosen', 400))
+=======
+        return next (new catchError('Silakan masukkan NIDN yang sesuai', 400))
+>>>>>>> c0348a3d52d94569a9a92a78f37e6f1deccc9bb3
     }
     // cek apakah role sesuai opsi
     if(!['admin', 'dekan', 'kaprodi', 'dosen'].includes(body.role)) {
@@ -85,7 +89,7 @@ const updateUser = catchAsync (async (req, res, next) => {
     }
     // cek apakah role terbaru sesuai opsi
     if (!validRoles.includes(body.role)) {
-        return next(new catchError(`Peran tidak valid. Pilihan yang tersedia: ${validRoles.join(', ')}`, 400));
+        return next(new catchError(`Peran tidak valid. Opsi: ${validRoles.join(', ')}`, 400));
     }
     // ganti menjadi role terbaru
     dataUser.role = body.role;
