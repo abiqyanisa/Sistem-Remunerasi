@@ -1,6 +1,5 @@
 import { Sequelize } from 'sequelize';
 import { Umzug, SequelizeStorage } from 'umzug';
-
 import dbConfig from '../config/config.cjs';
 
 // Setup sequelize

@@ -1,5 +1,4 @@
 import express from 'express';
-
 import { authentication, restrictToRole } from '../controllers/auth.controller.js';
 import { getAllUser, addUser, updateUser, deleteUser } from '../controllers/user.controller.js';
 

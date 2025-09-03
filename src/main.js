@@ -21,7 +21,7 @@ app.use(
 );
 app.use(express.json());
 app.use(trimResponse);
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(helmet());
 app.disable('x-powered-by');
 
@@ -37,7 +37,6 @@ app.listen(process.env.APP_PORT, () => {
 
 // Error Handling
 app.use(catchAsync (async(req, res, next) => {
-    throw new catchError(`can't find ${req.originalUrl} on this server`, 404);
+    throw new catchError(`URL ${req.originalUrl} tidak ditemukan`, 404);
 }));
-
 app.use(globalErrorHandler);

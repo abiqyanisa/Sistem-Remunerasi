@@ -1,22 +1,30 @@
 import db from "../database/models/model.js";
+import { catchError } from "../utils/catchError.js";
 
 // Validasi fakultas
-export async function validateFakultas(kode) {
-    if (!kode) return true;
-    const found = await db.Fakultas.findOne({ where: { kode: kode }});
-    return !!found;
-}
+export default async function validateFakProdiNidn(req, res, next) {
+    const { fakultas, prodi, nidn } = req.query;
 
-// Validasi prodi
-export async function validateProdi(kode) {
-    if (!kode) return true;
-    const found = await db.ProgramStudi.findOne({ where: { kode: kode } });
-    return !!found;
-}
+    if (fakultas) {
+        const foundFakultas = await db.Fakultas.findOne({ where: { kode: fakultas } });
+        if (!foundFakultas) {
+            return next(new catchError(`Kode fakultas '${fakultas}' tidak ditemukan`, 404));
+        }
+    }
 
-// Validasi dosen (nidn)
-export async function validateNidn(nidn) {
-    if (!nidn) return true;
-    const found = await db.DataDosen.findOne({ where: { nidn } });
-    return !!found;
+    if (prodi) {
+        const foundProdi = await db.ProgramStudi.findOne({ where: { kode: prodi } });
+        if (!foundProdi) {
+            return next(new catchError(`Kode program studi '${prodi}' tidak ditemukan`, 404));
+        }
+    }
+
+    if (nidn) {
+        const foundNidn = await db.DataDosen.findOne({ where: { nidn } });
+        if (!foundNidn) {
+            return next(new catchError(`NIDN dosen '${nidn}' tidak ditemukan`, 404));
+        }
+    }
+
+    next();
 }

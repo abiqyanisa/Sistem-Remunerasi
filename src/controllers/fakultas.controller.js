@@ -1,10 +1,7 @@
 import { Op } from "sequelize";
+import crypto from "crypto";
 import db from "../database/models/model.js";
 import { catchAsync } from "../utils/catchAsync.js";
-import { catchError } from "../utils/catchError.js";
-import { validateFakultas, validateNidn, validateProdi } from "../middleware/dataValidator.js";
-
-import crypto from "crypto";
 import { getCache, setCache } from "../middleware/nodeCache.js";
 
 const getDataFakultas = catchAsync (async (req, res, next) => {
@@ -19,19 +16,6 @@ const getDataFakultas = catchAsync (async (req, res, next) => {
     if (cachedData) {
         console.log("Serve Get Fakultas from node-cache");
         return res.json(cachedData);
-    }
-
-    // Validasi input
-    if (!(await validateFakultas(fakultas))) {
-        return next(new catchError(`Kode fakultas '${fakultas}' tidak ditemukan`, 404));
-    }
-
-    if (!(await validateProdi(prodi))) {
-        return next(new catchError(`Kode program studi '${prodi}' tidak ditemukan`, 404));
-    }
-
-    if (!(await validateNidn(nidn))) {
-        return next(new catchError(`NIDN dosen '${nidn}' tidak ditemukan`, 404));
     }
 
     // Build kondisi where
@@ -69,7 +53,7 @@ const getDataFakultas = catchAsync (async (req, res, next) => {
     });
     
     const responseData = {
-        status: 'sukses',
+        status: 'success',
         dataFakultas
     };
 

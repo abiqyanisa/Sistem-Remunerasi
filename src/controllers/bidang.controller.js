@@ -6,10 +6,10 @@ import { catchAsync } from "../utils/catchAsync.js";
 import { getCache, setCache } from "../middleware/nodeCache.js";
 
 const semesterMAP = {
-  ganjil: 1,
-  genap: 4,
-  '1': 1,
-  '4': 4
+    ganjil: 1,
+    genap: 4,
+    '1': 1,
+    '4': 4
 };
 
 const getKinerja = catchAsync(async (req, res, next) => {
@@ -72,7 +72,6 @@ const getKinerja = catchAsync(async (req, res, next) => {
         }]
     });
 
-
     const kinerjaPlain = Kinerja.toJSON();
     kinerjaPlain.Bidang_Unsur = (kinerjaPlain.Bidang_Unsur ?? [])
         .map(unsur => {
@@ -83,7 +82,7 @@ const getKinerja = catchAsync(async (req, res, next) => {
         .filter(Boolean);
 
     const responseData = {
-        status: 'sukses',
+        status: 'success',
         bidang: removeNulls(kinerjaPlain)
     };
 

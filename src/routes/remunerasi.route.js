@@ -1,6 +1,6 @@
 import express from 'express';
 import authorizeScope from '../middleware/authorizeScope.js';
-
+import validateFakProdiNidn from '../middleware/dataValidator.js';
 import { authentication } from '../controllers/auth.controller.js';
 import { getDataFakultas } from '../controllers/fakultas.controller.js';
 import { getDataProdi } from '../controllers/program_studi.controller.js';
@@ -13,21 +13,24 @@ const remunerasiRouter = express.Router();
 remunerasiRouter.route('/fakultas')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     getDataFakultas
 )
     
 remunerasiRouter.route('/programstudi')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     getDataProdi
 )
 
 remunerasiRouter.route('/dosen')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     getDataDosen
 )
 
@@ -41,7 +44,8 @@ const setKodeBidang = (kode) => {
 remunerasiRouter.route('/pendidikan')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     filterDosenByFakultas,
     filterDosenByProdi,
     filterDosenByKin,
@@ -52,7 +56,8 @@ remunerasiRouter.route('/pendidikan')
 remunerasiRouter.route('/pelaksanaan-pendidikan')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     filterDosenByFakultas,
     filterDosenByProdi,
     filterDosenByKin,
@@ -63,7 +68,8 @@ remunerasiRouter.route('/pelaksanaan-pendidikan')
 remunerasiRouter.route('/penelitian')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     filterDosenByFakultas,
     filterDosenByProdi,
     filterDosenByKin,
@@ -74,7 +80,8 @@ remunerasiRouter.route('/penelitian')
 remunerasiRouter.route('/pengabdian')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     filterDosenByFakultas,
     filterDosenByProdi,
     filterDosenByKin,
@@ -85,7 +92,8 @@ remunerasiRouter.route('/pengabdian')
 remunerasiRouter.route('/penunjang')
 .get(
     authentication, 
-    authorizeScope(), 
+    authorizeScope, 
+    validateFakProdiNidn,
     filterDosenByFakultas,
     filterDosenByProdi,
     filterDosenByKin,

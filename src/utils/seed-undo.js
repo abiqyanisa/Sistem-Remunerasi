@@ -1,5 +1,4 @@
 import { Sequelize } from 'sequelize';
-
 import config from '../config/config.cjs';
 import * as seedFn from '../database/seeders/20250508033159-admin-user.mjs';
 

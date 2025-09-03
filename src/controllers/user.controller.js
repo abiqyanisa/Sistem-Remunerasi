@@ -19,7 +19,7 @@ const getAllUser = catchAsync(async (req, res, next) => {
             return next(new catchError('Pengguna tidak ditemukan', 404));
         }
         return res.json({
-            status: 'sukses',
+            status: 'success',
             dataUser
         });
     }
@@ -42,7 +42,7 @@ const getAllUser = catchAsync(async (req, res, next) => {
     });
     const daftarUser = Users.map(user => user.toJSON());
     return res.json({
-        status: 'sukses',
+        status: 'success',
         daftarUser
     });
 });
@@ -55,7 +55,7 @@ const addUser = catchAsync (async (req, res, next) => {
     // cek apakah nidn yang dimasukkan sesuai dengan nidn data dosen
     const checkNidn = await db.DataDosen.findByPk(body.nidn)
     if (!checkNidn) {
-        return next (new catchError('Silakan masukkan NIDN yang sesuai dengan data dosen', 400))
+        return next (new catchError('Masukkan NIDN yang sesuai dengan data dosen', 400))
     }
     // cek apakah role sesuai opsi
     if(!['admin', 'dekan', 'kaprodi', 'dosen'].includes(body.role)) {
@@ -69,7 +69,7 @@ const addUser = catchAsync (async (req, res, next) => {
         confirmPassword: body.confirmPassword,
     });
     return res.status(201).json({
-        status: 'sukses',
+        status: 'success',
         newUser
     })
 });
@@ -96,7 +96,7 @@ const updateUser = catchAsync (async (req, res, next) => {
     }
     const updatedDataUser = await dataUser.save();
     return res.status(200).json({
-        status: 'sukses',
+        status: 'success',
         updatedDataUser
     })
 });
@@ -112,7 +112,7 @@ const deleteUser = catchAsync (async (req, res, next) => {
     // hapus user
     await dataUser.destroy();
     return res.status(200).json({
-        status: 'sukses',
+        status: 'success',
         message: 'Pengguna berhasil dihapus'
     })
 });

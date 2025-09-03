@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt";
-
 import db from '../database/models/model.js';
 import { catchAsync } from "../utils/catchAsync.js";
 import { catchError } from "../utils/catchError.js";
@@ -19,9 +18,9 @@ const login = catchAsync(async (req, res, next) => {
         return next(new catchError('Nidn dan kata sandi harus diisi', 400));
     }
     // cek user
-    const user = await db.User.findOne({ where: { nidn } });
+    const user = await db.User.findByPk(nidn);
     if (!user || !(await bcrypt.compare(password, user.password))) {
-        return next(new catchError('Nidn atau kata sandi tidak sesuai', 401));
+        return next(new catchError('Nidn atau kata sandi salah', 401));
     }
     // Ambil data dosen dan relasinya
     const dosen = await db.DataDosen.findOne({
@@ -41,35 +40,20 @@ const login = catchAsync(async (req, res, next) => {
     if (!dosen) {
         return next(new catchError('Data dosen tidak ditemukan', 404));
     }
-    let redirectPath = '';
-    // Dosen
-    if (user.role === 'dosen') {
-        redirectPath = `/api/dosen?nidn=${dosen.nidn}`;
-    }
-    // Admin
-    if (user.role === 'admin') {
-        redirectPath = '/api/users';
-    }
-    // Dekan
-    const dekanFak = await db.Fakultas.findOne({
+    // Fakultas
+    const dosenFak = await db.Fakultas.findOne({
         where: { kode: dosen.fakultas } 
     })
-    if (user.role === 'dekan') {
-        redirectPath = `/api/fakultas?fakultas=${dekanFak.kode}`
-    }
-    // Kaprodi
-    const kaProdi = await db.ProgramStudi.findOne({
+    // Prodi
+    const dosenProdi = await db.ProgramStudi.findOne({
         where: { kode: dosen.prodi }
     })
-    if (user.role === 'kaprodi') {
-        redirectPath = `/api/programstudi?prodi=${kaProdi.kode}`
-    }
     // Generate token dengan kode fakultas dan prodi
     const token = generateToken({
         nidn: user.nidn,
         role: user.role,
-        fakultas: dekanFak.kode,
-        prodi: kaProdi.kode,
+        fakultas: dosenFak.kode,
+        prodi: dosenProdi.kode
     });
     return res
         .cookie("token", token, {
@@ -79,15 +63,14 @@ const login = catchAsync(async (req, res, next) => {
             maxAge: 24 * 60 * 60 * 1000, // 1 day
         })
         .status(200).json({
-            status: 'sukses',
+            status: 'success',
             token,
             user: {
                 nidn: user.nidn,
                 role: user.role,
-                fakultas: dekanFak.kode,
-                prodi: kaProdi.kode
-            },
-            redirectPath
+                fakultas: dosenFak.kode,
+                prodi: dosenProdi.kode
+            }
         });
 });
 
@@ -96,7 +79,7 @@ const authentication = catchAsync (async (req, res, next) => {
     // 1. Try from Authorization header
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith("Bearer ")) {
-        token = authHeader.split(" ")[1];
+        token = authHeader.split(' ')[1];
     }
     // 2. Fallback to cookie
     if (!token && req.cookies && req.cookies.token) {
@@ -104,18 +87,18 @@ const authentication = catchAsync (async (req, res, next) => {
     }
     // 3. error handling if token was empty
     if (!token) {
-        return next(new catchError("Silakan login terlebih dahulu", 401));
+        return next(new catchError("Silakan log in terlebih dahulu", 401));
     }
     
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        const freshUser = await db.User.findByPk(decoded.nidn);
+        const tokenUser = await db.User.findByPk(decoded.nidn);
         // Simpan payload token ke req.user
         req.user = decoded;
-        req.db = { User: freshUser };
+        req.db = { User: tokenUser };
         next();
     } catch (err) {
-        return next (new catchError('Sesi Anda telah habis. Silakan masuk kembali', 401));
+        return next (new catchError('Sesi Anda telah berakhir. Silakan masuk kembali', 401));
     }
 });
 
