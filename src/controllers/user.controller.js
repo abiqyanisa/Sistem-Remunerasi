@@ -55,11 +55,7 @@ const addUser = catchAsync (async (req, res, next) => {
     // cek apakah nidn yang dimasukkan sesuai dengan nidn data dosen
     const checkNidn = await db.DataDosen.findByPk(body.nidn)
     if (!checkNidn) {
-<<<<<<< HEAD
         return next (new catchError('Masukkan NIDN yang sesuai dengan data dosen', 400))
-=======
-        return next (new catchError('Silakan masukkan NIDN yang sesuai', 400))
->>>>>>> c0348a3d52d94569a9a92a78f37e6f1deccc9bb3
     }
     // cek apakah role sesuai opsi
     if(!['admin', 'dekan', 'kaprodi', 'dosen'].includes(body.role)) {

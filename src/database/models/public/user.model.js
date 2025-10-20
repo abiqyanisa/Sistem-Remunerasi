@@ -48,11 +48,7 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.VIRTUAL,
       set(value) {
         if (this.password.length < 7) {
-<<<<<<< HEAD
           throw new catchError('Password harus lebih dari 7 karakter', 400)
-=======
-          throw new catchError('Kata sandi minimal 7 karakter', 400)
->>>>>>> c0348a3d52d94569a9a92a78f37e6f1deccc9bb3
         }
         if (value === this.password) {
           const hassPassword = bcrypt.hashSync(value, 10);
@@ -60,11 +56,7 @@ export default (sequelize, DataTypes) => {
         }
         else {
           throw new catchError(
-<<<<<<< HEAD
             'Password and confirm password harus sama',
-=======
-            'Kata sandi dan konfirmasi kata sandi harus sesuai',
->>>>>>> c0348a3d52d94569a9a92a78f37e6f1deccc9bb3
             400
           );
         }
