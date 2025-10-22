@@ -1,3 +1,4 @@
+import serverless from 'serverless-http'
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from "cors";
@@ -29,14 +30,25 @@ app.disable('x-powered-by');
 app.use('/api/auth', authRouter)
 app.use('/api/users', userRouter)
 app.use('/api', remunerasiRouter)
+app.get('/', (req, res) => {
+    res.json({ message: 'Hello from API' });
+});
 
 // Server
-app.listen(process.env.APP_PORT, () => {
-    console.log(`Server is running at PORT ${process.env.APP_PORT}`)
-});
+// app.listen(process.env.APP_PORT, () => {
+//     console.log(`Server is running at PORT ${process.env.APP_PORT}`)
+// });
 
 // Error Handling
 app.use(catchAsync (async(req, res, next) => {
     throw new catchError(`URL ${req.originalUrl} tidak ditemukan`, 404);
 }));
 app.use(globalErrorHandler);
+
+// Serverless
+export const handler = serverless(app);
+// if (process.env.NODE_ENV !== 'production') {
+//     app.listen(process.env.APP_PORT, () => {
+//         console.log(`Running locally on port ${process.env.APP_PORT}`);
+//     });
+// }

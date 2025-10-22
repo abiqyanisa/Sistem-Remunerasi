@@ -38,6 +38,7 @@
     "pg-hstore": "^2.3.4",
     "pm2": "^6.0.13",
     "sequelize": "^6.37.7",
+    "serverless-http": "^4.0.0",
     "slugify": "^1.6.6",
     "umzug": "^3.8.2"
   }
