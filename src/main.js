@@ -1,5 +1,7 @@
-import serverless from 'serverless-http'
 import dotenv from 'dotenv';
+dotenv.config();
+
+import serverless from 'serverless-http'
 import express from 'express';
 import cors from "cors";
 import helmet from 'helmet';
@@ -12,7 +14,6 @@ import { catchAsync } from './utils/catchAsync.js';
 import { catchError } from './utils/catchError.js';
 import { globalErrorHandler } from './controllers/error.controller.js';
 
-dotenv.config();
 const app = express();
 app.use(
     cors({
@@ -35,9 +36,9 @@ app.get('/', (req, res) => {
 });
 
 // Server
-// app.listen(process.env.APP_PORT, () => {
-//     console.log(`Server is running at PORT ${process.env.APP_PORT}`)
-// });
+app.listen(process.env.APP_PORT, '0.0.0.0', () => {
+    console.log(`Server is running at PORT ${process.env.APP_PORT}`)
+});
 
 // Error Handling
 app.use(catchAsync (async(req, res, next) => {
@@ -47,8 +48,3 @@ app.use(globalErrorHandler);
 
 // Serverless
 export const handler = serverless(app);
-// if (process.env.NODE_ENV !== 'production') {
-//     app.listen(process.env.APP_PORT, () => {
-//         console.log(`Running locally on port ${process.env.APP_PORT}`);
-//     });
-// }
