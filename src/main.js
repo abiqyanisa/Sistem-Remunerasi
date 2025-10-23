@@ -7,6 +7,7 @@ import cors from "cors";
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import trimResponse from './middleware/trimResponse.js';
+import { sequelize } from './config/database.js';
 import { authRouter } from './routes/auth.route.js';
 import { userRouter } from './routes/user.route.js';
 import { remunerasiRouter } from './routes/remunerasi.route.js';
@@ -36,9 +37,21 @@ app.get('/', (req, res) => {
 });
 
 // Server
-app.listen(process.env.APP_PORT, '0.0.0.0', () => {
-    console.log(`Server is running at PORT ${process.env.APP_PORT}`)
-});
+sequelize.authenticate()
+    .then(() => console.log('Database connected'))
+    .catch((err) => console.error('Database connection error:', err));
+// Development mode
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(process.env.APP_PORT, () => {
+        console.log(`Server is running locally at PORT ${process.env.APP_PORT}`);
+    });
+}
+// Production mode
+else {
+    app.listen(process.env.APP_PORT, '0.0.0.0', () => {
+        console.log(`Server is running in production at http://${process.env.AWS_HOST || '0.0.0.0'}:${process.env.APP_PORT}`);
+    });
+}
 
 // Error Handling
 app.use(catchAsync (async(req, res, next) => {
